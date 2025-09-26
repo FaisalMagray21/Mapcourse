@@ -136,6 +136,43 @@ let function2=(callback)=>{
   callback(num);
 }
 function2(function1);
+const student={
+  name:"Faisal",
+  age:23,
+  rollno:"22-ARID-4267",
+  address:{
+    city:"Rawalpindi",
+    Counrty:"Pakistan"
+  },
+  subjects:{
+    DSA:{
+      teachername:"DR MUnir",
+      Marks:80
+    },
+        OOP:{
+      teachername:"sir Afrasaib",
+      Marks:80
+    },
+        MAP:{
+      teachername:"sir Aftab",
+      Marks:80
+    }
 
 
+  }
+}
 
+
+console.log(student.address);
+console.log(student.subjects);
+console.log(student.name);
+console.log(student.age);
+
+console.log("Updated result");
+student.name="Yasir ";
+student.age=25;
+student.subjects.DSA.teachername="DR Zeeshan"
+student.subjects.OOP.Marks=60;
+console.log(student.name);
+console.log(student.age);
+console.log(student.subjects);
