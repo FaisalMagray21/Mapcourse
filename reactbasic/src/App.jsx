@@ -19,10 +19,10 @@ const App = () => {
   }
   return (
     <div>
-      {/* <h1 style={headingstyle}>wellcome {formatname(user)} </h1>
+      <h1 style={headingstyle}>wellcome {formatname(user)} </h1>
       <Wellcome names="faisal"/>
-      <Formdata/> */}
-      <Cafe/>
+      <Formdata/>
+      {/* <Cafe/> */}
     </div>
   )
 }
