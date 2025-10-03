@@ -2,6 +2,7 @@ import React from 'react'
 import Wellcome from './Wellcome'
 import Formdata from './Formdata'
 import Cafe from './Cafe'
+import Student from './Student'
 const App = () => {
   const name="Aftab"
   const formatname=(user)=>{
@@ -19,10 +20,11 @@ const App = () => {
   }
   return (
     <div>
-      <h1 style={headingstyle}>wellcome {formatname(user)} </h1>
+      {/* <h1 style={headingstyle}>wellcome {formatname(user)} </h1>
       <Wellcome names="faisal"/>
-      <Formdata/>
+      <Formdata/> */}
       {/* <Cafe/> */}
+      <Student/>
     </div>
   )
 }
