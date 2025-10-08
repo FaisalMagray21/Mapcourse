@@ -54,7 +54,7 @@ const Student = () => {
   };
 
   return (
-    <div>
+    <div >
       <h1>Student Information</h1>
       <form onSubmit={handleSubmit}>
         <div>
@@ -141,7 +141,7 @@ const Student = () => {
             value="Female"
             name="gender"
             checked={formData.gender === "Female"}
-            onChange={handleChange}
+            onChange={handleChange} 
           />{" "}
           Female
         </div>

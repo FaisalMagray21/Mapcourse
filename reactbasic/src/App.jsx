@@ -3,6 +3,8 @@ import Wellcome from './Wellcome'
 import Formdata from './Formdata'
 import Cafe from './Cafe'
 import Student from './Student'
+import RecordTable from './RecordTable'
+import Formdatadeatil from './Formdatadetail'
 const App = () => {
   const name="Aftab"
   const formatname=(user)=>{
@@ -24,7 +26,9 @@ const App = () => {
       <Wellcome names="faisal"/>
       <Formdata/> */}
       {/* <Cafe/> */}
-      <Student/>
+      {/* <Student/> */}
+      {/* <RecordTable/> */}
+      <Formdatadeatil/>
     </div>
   )
 }
