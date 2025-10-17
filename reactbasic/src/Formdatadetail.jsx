@@ -103,7 +103,10 @@ export default function FormDataDetail() {
           /> Male
         </label>
         <label>
-          <input
+          <input style={{
+            backgroundColor:"yellow"
+          }}
+            
             type="radio"
             name="gender"
             value="Female"
@@ -153,7 +156,7 @@ export default function FormDataDetail() {
             <option value="">-- Select Country --</option>
             {countries.map((c) => (
               <option key={c.code} value={c.code}>
-                {c.name} ({c.code})
+                   {c.name} ({c.code})
               </option>
             ))}
           </select>
@@ -171,8 +174,8 @@ export default function FormDataDetail() {
           >
             <option value="">-- Select City --</option>
             {filteredCities.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.name} ({c.code})
+              <option key={c.code} value={c.name}>
+                ({c.name}) {c.code}
               </option>
             ))}
           </select>

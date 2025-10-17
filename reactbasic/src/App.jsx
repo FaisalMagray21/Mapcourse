@@ -5,6 +5,7 @@ import Cafe from './Cafe'
 import Student from './Student'
 import RecordTable from './RecordTable'
 import Formdatadeatil from './Formdatadetail'
+import Fullform from './Fullform'
 const App = () => {
   const name="Aftab"
   const formatname=(user)=>{
@@ -28,7 +29,8 @@ const App = () => {
       {/* <Cafe/> */}
       {/* <Student/> */}
       {/* <RecordTable/> */}
-      <Formdatadeatil/>
+      {/* <Formdatadeatil/> */}
+      <Fullform/>
     </div>
   )
 }
