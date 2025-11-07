@@ -7,6 +7,8 @@ import RecordTable from './RecordTable'
 import Formdatadeatil from './Formdatadetail'
 import Fullform from './Fullform'
 import EmployeeData from './EmployeeData'
+import Practice from './Practice'
+import ProductAdvanced from './ProductAdvanced'
 const App = () => {
   const name="Aftab"
   const formatname=(user)=>{
@@ -32,8 +34,10 @@ const App = () => {
       {/* <RecordTable/> */}
       {/* <Formdatadeatil/> */}
       {/* <Fullform/> */}
-      <Formdata/>
+      {/* <Formdata/> */}
       {/* <EmployeeData/> */}
+      {/* <Practice/> */}
+      <ProductAdvanced/>
     </div>
   )
 }
