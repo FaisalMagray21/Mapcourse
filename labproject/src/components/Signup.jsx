@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { db } from "../db"; // import the Dexie database
+import React, { useState } from "react";
+import { db } from "../db";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
     password: "",
     confirmPassword: "",
-    type: "student",
+    type: "",          // 👈 now dynamic
     contact: "",
     address: "",
     agree: false,
@@ -15,16 +18,6 @@ export default function Signup() {
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
-  const [records, setRecords] = useState([]);
-
-  // Load saved users when component mounts
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const allUsers = await db.users.toArray();
-      setRecords(allUsers);
-    };
-    fetchUsers();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,6 +44,8 @@ export default function Signup() {
     else if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
 
+    if (!formData.type) newErrors.type = "Select a role (Admin or Teacher).";
+
     if (!formData.contact.trim()) newErrors.contact = "Contact number is required.";
     else if (!/^\d{10,15}$/.test(formData.contact))
       newErrors.contact = "Enter a valid contact number.";
@@ -70,31 +65,33 @@ export default function Signup() {
       const newRecord = {
         fullname: formData.fullname,
         email: formData.email,
-        password:formData.password,
-        type: formData.type,
+        password: formData.password,
+        type: formData.type,       // 👈 now saving dynamic role
         contact: formData.contact,
         address: formData.address,
       };
 
-      // ✅ Save data into Dexie
       await db.users.add(newRecord);
+      setSuccess("Signup Successful!");
 
-      // ✅ Fetch updated data
-      const updatedUsers = await db.users.toArray();
-      setRecords(updatedUsers);
-      setSuccess("Signup Successful and saved to Dexie!");
+      // 🔥 Redirect based on role
+      if (formData.type === "admin") {
+        navigate("/admin");
+      } else if (formData.type === "teacher") {
+        navigate("/teacher");
+      }
 
-      // Reset form
       setFormData({
         fullname: "",
         email: "",
         password: "",
         confirmPassword: "",
-        type: "student",
+        type: "",
         contact: "",
         address: "",
         agree: false,
       });
+
       setErrors({});
     }
   };
@@ -106,127 +103,123 @@ export default function Signup() {
         className="bg-white shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-5"
       >
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-indigo-600">
-          Signup Form
+          Signup (Admin / Teacher)
         </h2>
 
         {success && <div className="text-green-600 font-semibold text-center">{success}</div>}
 
         {/* Full Name */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Full Name</label>
+          <label className="block font-medium">Full Name</label>
           <input
             type="text"
             name="fullname"
             value={formData.fullname}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
+            className="w-full px-3 py-2 border rounded-md"
           />
-          {errors.fullname && <p className="text-red-500 text-sm">{errors.fullname}</p>}
+          {errors.fullname && <p className="text-red-500">{errors.fullname}</p>}
         </div>
 
         {/* Email */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Email</label>
+          <label className="block font-medium">Email</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
+            className="w-full px-3 py-2 border rounded-md"
           />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          {errors.email && <p className="text-red-500">{errors.email}</p>}
         </div>
 
         {/* Password */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Password</label>
+          <label className="block font-medium">Password</label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
+            className="w-full px-3 py-2 border rounded-md"
           />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+          {errors.password && <p className="text-red-500">{errors.password}</p>}
         </div>
 
         {/* Confirm Password */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Confirm Password</label>
+          <label className="block font-medium">Confirm Password</label>
           <input
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
+            className="w-full px-3 py-2 border rounded-md"
           />
-          {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+          {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
         </div>
 
-        {/* Type */}
+        {/* Role Select */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">User Type</label>
+          <label className="block font-medium">Select Role</label>
           <select
             name="type"
             value={formData.type}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
+            className="w-full px-3 py-2 border rounded-md"
           >
+            <option value="">Choose Role</option>
             <option value="admin">Admin</option>
             <option value="teacher">Teacher</option>
-            <option value="student">Student</option>
           </select>
+          {errors.type && <p className="text-red-500">{errors.type}</p>}
         </div>
 
         {/* Contact */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Contact</label>
+          <label className="block font-medium">Contact</label>
           <input
             type="text"
             name="contact"
             value={formData.contact}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
+            className="w-full px-3 py-2 border rounded-md"
           />
-          {errors.contact && <p className="text-red-500 text-sm">{errors.contact}</p>}
+          {errors.contact && <p className="text-red-500">{errors.contact}</p>}
         </div>
 
         {/* Address */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Address</label>
+          <label className="block font-medium">Address</label>
           <textarea
             name="address"
             value={formData.address}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-300 text-sm sm:text-base"
-          ></textarea>
-          {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+          {errors.address && <p className="text-red-500">{errors.address}</p>}
         </div>
 
         {/* Checkbox */}
-        <div className="flex items-center space-x-2 text-sm sm:text-base">
+        <div className="flex items-center space-x-2">
           <input
             type="checkbox"
             name="agree"
             checked={formData.agree}
             onChange={handleChange}
-            className="h-4 w-4 text-indigo-500"
           />
-          <label>I agree to the terms and conditions</label>
+          <label>I agree to the terms</label>
         </div>
-        {errors.agree && <p className="text-red-500 text-sm">{errors.agree}</p>}
+        {errors.agree && <p className="text-red-500">{errors.agree}</p>}
 
-        {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold transition duration-300 text-sm sm:text-base"
+          className="w-full bg-indigo-600 text-white py-2 rounded-md"
         >
           Signup
         </button>
       </form>
-
-      {/* Display saved users */}
-
     </div>
   );
 }
