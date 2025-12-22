@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { db } from "../db"; // import Dexie database
+import { db } from "../db";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ setLoggedInUser }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [userType, setUserType] = useState("");
-  const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,103 +21,80 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setSuccess("");
-    setUserType("");
-    setUserName("");
 
     if (!formData.email.trim() || !formData.password.trim()) {
-      setError("⚠️ Please enter both email and password.");
+      setError("⚠️ Enter both email and password.");
       return;
     }
 
-    // ✅ Fetch user from Dexie database
     const user = await db.users.where("email").equals(formData.email).first();
 
     if (!user) {
-      setError("❌ No user found with this email!");
+      setError("❌ User not found!");
       return;
     }
 
-    // ✅ Check password
     if (user.password !== formData.password) {
-      setError("❌ Incorrect password!");
+      setError("❌ Wrong password!");
       return;
     }
 
-    // ✅ Successful login
-    setUserType(user.type);
-    setUserName(user.fullname);
-    setSuccess(`✅ Welcome back, ${user.fullname}! You are logged in as ${user.type}.`);
+    // ✅ Set logged in user in App state
+    setLoggedInUser(user);
+    setSuccess(`Welcome ${user.fullname}! You are ${user.type}.`);
+
+    // ⭐ Redirect based on role after 1 second
+    setTimeout(() => {
+      if (user.type === "teacher") {
+        navigate("/teacher");
+      } else if (user.type === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/student-dashboard");
+      }
+    }, 1000);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-green-200 to-emerald-300 flex flex-col items-center justify-center px-4 py-10">
       <form
         onSubmit={handleLogin}
-        className="bg-white shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-md space-y-5"
+        className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md space-y-5"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-green-600">
-          Login Form
-        </h2>
+        <h2 className="text-3xl font-bold text-center text-green-700">Login</h2>
 
-        {/* Error Message */}
         {error && (
-          <div className="bg-red-100 text-red-700 font-semibold text-center rounded-md py-2 px-3">
-            {error}
-          </div>
+          <div className="bg-red-100 text-red-700 p-2 rounded">{error}</div>
         )}
 
-        {/* Success Message */}
         {success && (
-          <div className="bg-green-100 text-green-700 font-semibold text-center rounded-md py-2 px-3">
-            {success}
-          </div>
+          <div className="bg-green-100 text-green-700 p-2 rounded">{success}</div>
         )}
 
-        {/* Email */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Email</label>
+          <label className="font-medium">Email</label>
           <input
             type="email"
             name="email"
-            value={formData.email}
+            className="w-full mt-1 p-2 border rounded"
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-green-300 text-sm sm:text-base"
-            placeholder="Enter your email"
           />
         </div>
 
-        {/* Password */}
         <div>
-          <label className="block font-medium text-sm sm:text-base">Password</label>
+          <label className="font-medium">Password</label>
           <input
             type="password"
             name="password"
-            value={formData.password}
+            className="w-full mt-1 p-2 border rounded"
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-green-300 text-sm sm:text-base"
-            placeholder="Enter your password"
           />
         </div>
 
-        {/* Login Button */}
-        <button
-          type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition duration-300 text-sm sm:text-base"
-        >
+        <button className="w-full bg-green-600 text-white py-2 rounded">
           Login
         </button>
       </form>
-
-      {/* Show Welcome Card */}
-      {success && (
-        <div className="mt-8 bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
-          <h3 className="text-xl font-bold text-green-600 mb-2">Welcome!</h3>
-          <p className="text-gray-700">
-            <span className="font-semibold">{userName}</span> logged in as{" "}
-            <span className="font-bold capitalize text-green-700">{userType}</span>.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
